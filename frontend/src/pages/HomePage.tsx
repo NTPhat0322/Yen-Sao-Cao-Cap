@@ -4,8 +4,17 @@ import { Link } from "react-router";
 import "./HomePage.css";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award, Mail, MapPin, Phone, Shield, Truck } from "lucide-react";
+import { useRef } from "react";
 
 export default function HomePage() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const handleScrollToSection = () => {
+    sectionRef.current?.scrollIntoView({
+      behavior: "smooth", // cuộn mượt
+      block: "start", // căn phần đầu section
+    });
+  };
+
   return (
     <div className="home-page">
       {/* hero section */}
@@ -25,7 +34,9 @@ export default function HomePage() {
                     Xem sản phẩm
                   </Button>
                 </Link>
-                <Button variant="outline">Liên hệ ngay</Button>
+                <Button variant="outline" onClick={handleScrollToSection}>
+                  Liên hệ ngay
+                </Button>
               </div>
             </div>
             <div className="hero-image-container">
@@ -114,7 +125,7 @@ export default function HomePage() {
         </div>
       </section>
       {/* contacts section */}
-      <section className="contact-section">
+      <section className="contact-section" ref={sectionRef}>
         <div className="contact-container">
           <h2 className="contact-title">Thông tin liên hệ</h2>
           <div className="contact-grid">
