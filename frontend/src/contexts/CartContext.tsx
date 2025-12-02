@@ -130,3 +130,23 @@ export const useCart = () => {
     throw new Error("useCart must be used within a CartProvider");
   return context;
 };
+
+// Omit<T, K> là utility type có sẵn của TypeScript
+// T là một kiểu (ở đây là CartItem)
+// K là key hoặc tập key muốn loại bỏ khỏi kiểu đó
+
+// Omit<CartItem, "selected">
+// ---> Lấy kiểu CartItem nhưng bỏ field "selected"
+// product: Omit<CartItem, "selected"> --> product có kiểu CartItem nhưng không
+// có thuộc tính selected
+// Tức là product truyền vào addToCart không cần (và không được) có selected.
+
+//Tại sao cần Omit vậy
+//Ở đây khi thêm mới vào giỏ, bạn tự set selected: true trong hàm:
+//Người gọi hàm chỉ cần đưa các thông tin sản phẩm (id, name, price, quantity, …)
+//Còn selected là trạng thái nội bộ của giỏ hàng, do context tự quản lý
+//Nó giúp
+//Rõ ràng về trách nhiệm:
+//Caller: chỉ lo thông tin sản phẩm
+//CartContext: lo chuyện chọn / bỏ chọn (selected)
+//Tránh việc bên ngoài truyền nhầm selected = false lúc vừa add.

@@ -6,8 +6,8 @@ import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import CartPage from "./pages/CartPage";
 import Header from "./components/header/Header";
+import { CartPage } from "./pages/CartPage";
 
 function App() {
   return (
