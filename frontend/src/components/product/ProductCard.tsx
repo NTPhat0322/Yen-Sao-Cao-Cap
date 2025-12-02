@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Zap } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import "./ProductCard.css";
 
 interface ProductCardProps {
@@ -14,7 +14,7 @@ interface ProductCardProps {
   onBuyNow: (item: CartItem) => void;
 }
 
-export default function CartPage({ product, onBuyNow }: ProductCardProps) {
+export default function ProductCard({ product, onBuyNow }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
 
@@ -33,7 +33,7 @@ export default function CartPage({ product, onBuyNow }: ProductCardProps) {
       quantity: quantity,
       image: product.image,
     });
-    toast.success(`Đã thêm ${quantity} ${product.name} vào giỏ hàng`);
+    // toast.success(`Đã thêm ${quantity} ${product.name} vào giỏ hàng`);
     setQuantity(1);
   };
 
@@ -60,6 +60,7 @@ export default function CartPage({ product, onBuyNow }: ProductCardProps) {
           </div>
         </div>
       </div>
+
       <CardContent className="product-card-content">
         <h3 className="product-card-name">{product.name}</h3>
         <p className="product-card-description">{product.description}</p>
@@ -67,6 +68,7 @@ export default function CartPage({ product, onBuyNow }: ProductCardProps) {
           {product.price.toLocaleString("vi-VN")}đ
         </p>
       </CardContent>
+
       <CardFooter className="product-card-footer">
         <div className="product-card-quantity-row">
           <label className="product-card-quantity-label">Số lượng:</label>
