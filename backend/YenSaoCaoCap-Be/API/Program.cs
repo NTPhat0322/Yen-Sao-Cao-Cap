@@ -1,7 +1,12 @@
-
+using API.FluentValidation;
 using API.Middlewares;
+using Application.DTOs.Auth;
+using Application.Interfaces;
+using Application.Services;
 using Domain.Repositories;
 using DotNetEnv;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.RateLimiting;
@@ -68,6 +73,12 @@ builder.Services.AddRateLimiter(RateLimiterOptions =>
 //DI
 //builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+//DI for FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddTransient<IValidator<RegisterRequest>, RegisterValidator>();
 
 var app = builder.Build();
 
@@ -106,7 +117,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseAuthorization();
-
 
 app.UseRateLimiter();
 

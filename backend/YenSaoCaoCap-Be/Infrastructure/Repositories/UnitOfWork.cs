@@ -11,9 +11,12 @@ namespace Infrastructure.Repositories
         private readonly AppDbContext _context;
         private IDbContextTransaction? _transaction;
 
-        public UnitOfWork(AppDbContext context)
+        public IUserRepository Users { get; }
+
+        public UnitOfWork(AppDbContext context, IUserRepository users)
         {
             _context = context;
+            Users = users;
         }
 
         public async Task BeginTransactionAsync()
