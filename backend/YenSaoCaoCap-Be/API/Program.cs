@@ -2,8 +2,10 @@
 using API.Middlewares;
 using DotNetEnv;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Threading.RateLimiting;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -47,6 +49,21 @@ var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+//rate limitng 
+builder.Services.AddRateLimiter(RateLimiterOptions =>
+{
+    RateLimiterOptions.AddSlidingWindowLimiter("sliding", o =>
+    {
+        o.PermitLimit = 60;
+        o.Window = TimeSpan.FromSeconds(10);
+        o.SegmentsPerWindow = 6;
+        o.QueueLimit = 2;
+        o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+    RateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
+
 var app = builder.Build();
 
 //auto migrate and seed database
@@ -85,6 +102,9 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseAuthorization();
 
-app.MapControllers();
+
+app.UseRateLimiter();
+
+app.MapControllers().RequireRateLimiting("sliding");
 
 app.Run();
