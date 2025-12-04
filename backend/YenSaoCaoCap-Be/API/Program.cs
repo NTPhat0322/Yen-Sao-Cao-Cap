@@ -1,8 +1,18 @@
-
+using API.FluentValidation;
+using API.Middlewares;
+using Application.DTOs.Auth;
+using Application.Interfaces;
+using Application.Services;
+using Domain.Repositories;
 using DotNetEnv;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Threading.RateLimiting;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +56,30 @@ var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+//rate limitng 
+builder.Services.AddRateLimiter(RateLimiterOptions =>
+{
+    RateLimiterOptions.AddSlidingWindowLimiter("sliding", o =>
+    {
+        o.PermitLimit = 60;
+        o.Window = TimeSpan.FromSeconds(10);
+        o.SegmentsPerWindow = 6;
+        o.QueueLimit = 2;
+        o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+    RateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
+//DI
+//builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+//DI for FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddTransient<IValidator<RegisterRequest>, RegisterValidator>();
+
 var app = builder.Build();
 
 //auto migrate and seed database
@@ -79,10 +113,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
+app.UseMiddleware<GlobalExceptionHandler>();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseRateLimiter();
+
+app.MapControllers().RequireRateLimiting("sliding");
 
 app.Run();
