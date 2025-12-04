@@ -1,4 +1,5 @@
 
+using API.Middlewares;
 using DotNetEnv;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -79,8 +80,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
+app.UseMiddleware<GlobalExceptionHandler>();
 app.UseAuthorization();
 
 app.MapControllers();
