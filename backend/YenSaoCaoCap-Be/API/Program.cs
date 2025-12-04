@@ -1,7 +1,9 @@
 
 using API.Middlewares;
+using Domain.Repositories;
 using DotNetEnv;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -63,6 +65,9 @@ builder.Services.AddRateLimiter(RateLimiterOptions =>
     RateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
 
+//DI
+//builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
