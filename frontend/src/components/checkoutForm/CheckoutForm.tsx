@@ -1,4 +1,3 @@
-import type { CartItem } from "@/contexts/CartContext";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +11,7 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import "./CheckoutForm.css";
+import type { CartItem } from "@/interfaces/CartItem";
 
 interface CheckoutFormProps {
   items: CartItem[];
