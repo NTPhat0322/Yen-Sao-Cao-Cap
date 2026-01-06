@@ -1,8 +1,9 @@
-import type { CartItem } from "@/contexts/CartContext";
 import { useState } from "react";
 import { products } from "@/data/product";
 import ProductCard from "@/components/product/ProductCard";
 import "./ProductsPage.css";
+import CheckoutForm from "@/components/checkoutForm/CheckoutForm";
+import type { CartItem } from "@/interfaces/CartItem";
 
 export default function ProductsPage() {
   const [checkoutItem, setCheckoutItem] = useState<CartItem | null>(null);
@@ -36,9 +37,9 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      {/* {checkoutItem && (
+      {checkoutItem && (
         <CheckoutForm items={[checkoutItem]} onClose={handleCloseCheckout} />
-      )} */}
+      )}
     </div>
   );
 }

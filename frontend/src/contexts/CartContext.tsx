@@ -1,13 +1,14 @@
+import type { CartItem } from "@/interfaces/CartItem";
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  selected?: boolean;
-}
+// export interface CartItem {
+//   id: string;
+//   name: string;
+//   price: number;
+//   quantity: number;
+//   image: string;
+//   selected?: boolean;
+// }
 
 interface CartContextType {
   items: CartItem[];
