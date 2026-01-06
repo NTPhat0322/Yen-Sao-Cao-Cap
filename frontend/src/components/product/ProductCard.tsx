@@ -1,6 +1,5 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { Product } from "@/data/product";
-import { useCart, type CartItem } from "../../contexts/CartContext";
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,8 @@ import { ShoppingCart, Zap } from "lucide-react";
 import { useState } from "react";
 // import { toast } from "sonner";
 import "./ProductCard.css";
+import type { CartItem } from "@/interfaces/CartItem";
+import { useCart } from "@/contexts/CartContext";
 
 interface ProductCardProps {
   product: Product;
