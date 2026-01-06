@@ -11,6 +11,7 @@ import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import "./CheckoutForm.css";
 
 interface CheckoutFormProps {
   items: CartItem[];
