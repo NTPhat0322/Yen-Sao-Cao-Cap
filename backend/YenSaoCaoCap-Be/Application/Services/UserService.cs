@@ -13,9 +13,39 @@ namespace Application.Services
 {
     public class UserService(IUnitOfWork unitOfWork) : IUserService
     {
-        public Task<GenericResult<LoginResponse>> Login(LoginRequest request)
+        public async Task<GenericResult<LoginResponse>> Login(LoginRequest request)
         {
-            throw new NotImplementedException();
+            //check phone number exist
+            var user = await unitOfWork.Users.GetByPhoneNumber(request.PhoneNumber);
+            if (user is null)
+            {
+                return GenericResult<LoginResponse>.Failure("Phone number does not exist");
+            }
+            //check password
+            bool isPasswordValid = PasswordHasher.VerifyPassword(request.Password, user.HashedPassword);
+            if (!isPasswordValid)
+            {
+                return GenericResult<LoginResponse>.Failure("Invalid password");
+            }
+
+            //create access and refresh token
+            var accessToken = JwtHelper.CreateToken(user);
+            var refreshToken = RefreshTokenHelper.GenerateRefreshToken();
+
+            await unitOfWork.BeginTransactionAsync();
+            //hash refresh token and store to db
+            var hashedRefreshToken = RefreshTokenHelper.HashRefreshToken(refreshToken);
+            await unitOfWork.RefreshTokens.AddAsync(new RefreshToken(hashedRefreshToken, DateTime.UtcNow.AddDays(7), user));
+            
+            var rs = await unitOfWork.CommitAsync();
+            if (rs <= 0)
+                return GenericResult<LoginResponse>.Failure("login failed by saving refresh token to db.");
+
+            return GenericResult<LoginResponse>.Success(new LoginResponse { 
+                RefreshToken = refreshToken,
+                AccessToken = accessToken
+            }, "Login successful");
+
         }
 
         public async Task<GenericResult<string>> Register(RegisterRequest request)

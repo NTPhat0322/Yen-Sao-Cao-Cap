@@ -75,6 +75,7 @@ builder.Services.AddRateLimiter(RateLimiterOptions =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 //DI for FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
