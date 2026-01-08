@@ -75,10 +75,24 @@ builder.Services.AddRateLimiter(RateLimiterOptions =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 //DI for FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddTransient<IValidator<RegisterRequest>, RegisterValidator>();
+
+//cors policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") // change to your frontend URL
+                  .AllowAnyHeader()                 
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
 
 var app = builder.Build();
 
@@ -114,6 +128,8 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseAuthorization();

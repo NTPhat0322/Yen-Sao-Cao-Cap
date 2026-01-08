@@ -1,7 +1,6 @@
 ﻿using Application.DTOs.Auth;
 using Application.Helpers;
 using Application.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -10,18 +9,18 @@ namespace API.Controllers
     [ApiController]
     public class AuthController(IUserService userService) : ControllerBase
     {
-        [HttpPost]
-        public async Task<ActionResult> Login()
+        [HttpPost("/login")]
+        public async Task<ActionResult> Login([FromBody] LoginRequest request)
         {             
-            // Placeholder for login logic
-            return Ok(new { Message = "Login successful" });
+            var response = await userService.Login(request);
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
         [HttpPost("/register")]
         public async Task<ActionResult<GenericResult<string>>> Register([FromBody] RegisterRequest request)
         {
-            var rs = await userService.Register(request);
-            return Ok(rs);
+            var response = await userService.Register(request);
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
     }
 }

@@ -12,11 +12,13 @@ namespace Infrastructure.Repositories
         private IDbContextTransaction? _transaction;
 
         public IUserRepository Users { get; }
+        public IRefreshTokenRepository RefreshTokens { get; }
 
-        public UnitOfWork(AppDbContext context, IUserRepository users)
+        public UnitOfWork(AppDbContext context, IUserRepository users, IRefreshTokenRepository refreshTokens)
         {
             _context = context;
             Users = users;
+            RefreshTokens = refreshTokens;
         }
 
         public async Task BeginTransactionAsync()
