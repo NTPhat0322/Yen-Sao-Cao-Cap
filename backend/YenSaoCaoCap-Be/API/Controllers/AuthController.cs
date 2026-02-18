@@ -7,7 +7,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IUserService userService) : ControllerBase
+    public class AuthController(IUserService userService, IRefreshTokenService refreshTokenService) : ControllerBase
     {
         [HttpPost("/login")]
         public async Task<ActionResult> Login([FromBody] LoginRequest request)
@@ -21,6 +21,15 @@ namespace API.Controllers
         {
             var response = await userService.Register(request);
             return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPost("/refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            var response = await refreshTokenService.RefreshTokenAsync(request);
+            return response.IsSuccess
+                ? Ok(response)
+                : BadRequest(response);
         }
     }
 }
